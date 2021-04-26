@@ -2,7 +2,7 @@
 LIB	= pf
 INCDIR	= ${MINIREL_HOME}/h
 INCS	= 
-SRCS	= 
+SRCS	= pf.c
 TESTS	= pftest.c
 OBJS	= ${SRCS:.c=.o}
 LIBS	= lib${LIB}.a ../bf/libbf.a
@@ -10,7 +10,7 @@ LIBS	= lib${LIB}.a ../bf/libbf.a
 #############################################################################
 # This macro definition can be overwritten by command-line definitions.
 CC	= gcc
-CFLAGS	= -g -ansi -pedantic
+CFLAGS	= -g -ansi -pedantic -fPIC
 #CFLAGS	= -O -ansi -pedantic
 #############################################################################
 

@@ -1,8 +1,9 @@
 # Makefile for BF layer
 LIB	= bf
+MINIREL_HOME = ~/minirel/minirel
 INCDIR	= ${MINIREL_HOME}/h
 INCS	= 
-SRCS	= 
+SRCS	= ${MINIREL_HOME}/bf/bf.c ${MINIREL_HOME}/bf/bf_side.c
 TESTS	= bftest.c
 OBJS	= ${SRCS:.c=.o}
 LIBS	= lib${LIB}.a
@@ -28,6 +29,6 @@ $(OBJS): ${INCS}
 clean:
 	rm -f lib${LIB}.a *.o ${LIB}test *.bak *~
 
-.c.o:; $(CC) $(CFLAGS) -c $< -I. -I$(INCDIR)
+.c.o:; $(CC) $(CFLAGS) -c $< -I . -I $(INCDIR)
 
 

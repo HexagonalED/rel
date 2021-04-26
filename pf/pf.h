@@ -1,18 +1,34 @@
-//
-// Created by HexagonalED on 2021-03-28.
-//
-
 #ifndef MINIREL_PF_H
 #define MINIREL_PF_H
 
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "minirel.h"
+
+#define TRUE 1
+#define FALSE 0
+
+
 #define PF_FTAB_SIZE 1024
-#define PAGE_SIZE 4096
 
 #define PFE_OK 0
 #define PFE_ERROR -1
-#define TRUE 1
-#define FALSE 0
+#define PFE_FILEOPEN -2
+#define PFE_WRITE -3
+#define PFE_SYSCALL -4
+#define PFE_NOFILE -5
+#define PFE_FULLTABLE -6
+#define PFE_FREE -7
+#define PFE_PAGE -8
+#define PFE_EOF -9
+#define PF_BF -10
+
+typedef struct PFhdr_str {
+    int    numpages;      /* number of pages in the file */
+} PFhdr_str;
+
 
 typedef struct PFftab_ele {
     bool_t    valid;       /* set to TRUE when a file is open. */
@@ -23,23 +39,9 @@ typedef struct PFftab_ele {
     short     hdrchanged;  /* TRUE if file header has changed  */
 } PFftab_ele;
 
-typedef struct PFhdr_str {
-    int    numpages;      /* number of pages in the file */
-} PFhdr_str;
-
-
-typedef struct PFpage {
-    char pagebuf[PAGE_SIZE];
-} PFpage;
-
 
 PFftab_ele* pfTable;
-int pfTable_index=0;
 
-PFhdr_str* PF_initHeader(void){
-    PFhdr_str* ret = (PFhdr_str*)malloc(sizeof(PFhdr_str));
-    return ret;
-}
 
 void PF_Init(void);
 
@@ -91,4 +93,4 @@ void PF_PrintError (const char *errString);
 /*
 const char    *errString;  /* pointer to an error message */
 
-#endif //MINIREL_PF_H
+#endif 
