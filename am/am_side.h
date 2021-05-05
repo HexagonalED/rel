@@ -1,9 +1,9 @@
-#ifndef __AMUTILS_H__
-#define __AMUTILS_H__
+#ifndef __AM_SIDE_H__
+#define __AM_SIDE_H__
 
 
-#include "minirel.h"
-#include "am.h"
+#include "../h/minirel.h"
+#include "../h/am.h"
 
 #define OffsetNodeNumKeys (sizeof(bool_t)) 
 #define OffsetNodeLastPointer (sizeof(bool_t)+sizeof(int)) 

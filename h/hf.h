@@ -1,7 +1,7 @@
 #ifndef __HF_H__
 #define __HF_H__
 
-#include <minirel.h>
+#include "minirel.h"
 
 #define HF_FTAB_SIZE	MAXOPENFILES	/* max number of HF files allowed */
 #define MAXSCANS        MAXOPENFILES	/* max number of HF scans allowed */

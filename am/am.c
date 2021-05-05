@@ -6,11 +6,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <math.h>
+#include "../h/am.h"
+#include "../pf/pf.h"
+#include "../h/hf.h"
 #include "am_side.h"
-#include "pf.h"
-#include "../pf/pfUtils.h"
-#include "hf.h"
-#include "../hf/hfUtils.h"
+
 
 int AMerrno;
 
@@ -28,7 +28,7 @@ void AM_Init(void)
   AMitab_length = 0;
   if (!AMitab) AMerrno = AME_NOMEM;
   if (!AMscantab) AMerrno = AME_NOMEM;
-  HF_Init();
+  void HF_Init();
 }
 
 
@@ -47,8 +47,8 @@ int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength, b
   sprintf(pt->iname, "%s.%d", fileName, indexNo);
 
   error = PF_CreateFile(pt->iname);
-  if(error != PFE_OK)
-    PF_ErrorHandler(error);
+  // if(error != PFE_OK)
+  //   PF_ErrorHandler(error);
 
   fd = PF_OpenFile(pt->iname);
   if(fd < 0)
@@ -72,8 +72,8 @@ int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength, b
 
 
   error = PF_AllocPage(pt->fd, &pagenum, &headerbuf);
-  if (error != PFE_OK)
-    PF_ErrorHandler(error);
+  // if (error != PFE_OK)
+  //   PF_ErrorHandler(error);
 
   if (pagenum != 1)
     return AME_PF;
@@ -89,11 +89,10 @@ int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength, b
   pt->valid = FALSE;
   
   error = PF_UnpinPage(pt->fd, pagenum, 1);
-  if (error != PFE_OK) return PF_ErrorHandler(error);
+  // if (error != PFE_OK) return PF_ErrorHandler(error);
 
   error = PF_CloseFile(pt->fd);
-  if (error != PFE_OK) PF_ErrorHandler(error);
-
+  // if (error != PFE_OK) PF_ErrorHandler(error);
 
   AMitab_length--;
   printf("Index : %s created\n", pt->iname);
@@ -1131,3 +1130,4 @@ void AM_PrintError(char *errString)
   fprintf(stderr, "Comment provided: %s\n", errString);
   exit(-1);
 }
+

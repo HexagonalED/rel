@@ -1,11 +1,12 @@
 # Makefile for AM layer
 LIB	= am
+MINIREL_HOME = /home/tbop02/andri/minirel_ver20/rel
 INCDIR	= ${MINIREL_HOME}/h
 INCS	= 
-SRCS	= 
+SRCS	= ${MINIREL_HOME}/am/am.c ${MINIREL_HOME}/am/am_side.c
 TESTS	= amtest.c
 OBJS	= ${SRCS:.c=.o}
-LIBS	= lib${LIB}.a ../pf/libpf.a ../hf/libhf.a ../bf/libbf.a
+LIBS	= lib${LIB}.a ../hf/libhf.a ../pf/libpf.a ../bf/libbf.a
 
 #############################################################################
 # This macro definition can be overwritten by command-line definitions.
@@ -26,5 +27,5 @@ lib${LIB}.a: $(OBJS)
 clean:
 	rm -f lib${LIB}.a *.o ${LIB}test *.bak *~
 
-.c.o:; $(CC) $(CFLAGS) -c $< -I. -I$(INCDIR)
+.c.o:; $(CC) $(CFLAGS) -c $< -I . -I $(INCDIR)
 

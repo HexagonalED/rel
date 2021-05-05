@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "minirel.h"
+#include "../h/minirel.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -45,11 +45,11 @@ PFftab_ele* pfTable;
 
 void PF_Init(void);
 
-int PF_CreateFile (const char *filename);  /*const char     *filename; /* name of file to be created */
+int PF_CreateFile (char *filename);  /*const char     *filename; /* name of file to be created */
 
-int PF_DestroyFile (const char *filename); /*const char     *filename; /* name of file to be destroyed */
+int PF_DestroyFile (char *filename); /*const char     *filename; /* name of file to be destroyed */
 
-int PF_OpenFile (const char *filename); /*const char     *filename; /* name of the file to be opened */
+int PF_OpenFile (char *filename); /*const char     *filename; /* name of the file to be opened */
 
 int PF_CloseFile (int fd); /*int     fd;           /* PF file descriptor */
 

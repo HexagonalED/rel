@@ -1,8 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
 #include "am_side.h"
-#include "pf.h"
+#include "../h/pf.h"
 
 
 
@@ -48,81 +50,6 @@ bool_t compareChars(char* a, char* b, int op, int len)
     default: return FALSE;
   }
 }
-
-
-
-/* B tree*/
-/* policy to go through the B tree using a particular value, if the value if len than a key in a node or a leaf then the previous pointer has to be taken, otherwise ( greater or equal) the value is check with the next keys in the node until it is less than one or until the last key (the last pointer of the node is taken then )*/
-/* int AM_FindLeaf(int ifd,char* value, int* tab) algorithm: -check parameter: the size of tab is the height of the tree and the first element is the page num of root.
-               - go through the Btree with the policy explain above, and stock the pagenum of every scanned node in the array tab , at the end the pagenum of the leaf where the value has to be insert is returned 
-               - return error or HFE_OK, in case of duplicate key: the position of the first equal key in the leaf*/
-int AM_FindLeaf(int idesc, char* value, int* tab)
-{
-    int error,  pagenum;
-    bool_t is_leaf, pt_find;
-    int key_pos;
-    AMitab_ele* pt;
-    int fanout;
-    char* pagebuf;
-    int i,j;
-    /* all verifications of idesc and root number has already been done by the caller function */
-    pt=AMitab+idesc;
-    
-    tab[0]=pt->header.racine_page;
-   
-    if(tab[0]<=1) return AME_WRONGROOT;
-    
-    for(i=0; i<(pt->header.height_tree);i++)
-    {
-
-        error=PF_GetThisPage(pt->fd, tab[i], &pagebuf);
-        if(error!=PFE_OK) PF_ErrorHandler(error);
-        
-        /*check if this node is a leaf */
-        memcpy((bool_t*) &is_leaf, (char*) pagebuf, sizeof(bool_t));
-        
-        if( is_leaf==FALSE)
-        {
-            fanout=pt->fanout;
-            pt_find=FALSE;
-            j=0;
-            /* have to find the next child using comparison */
-            /* fanout = n ==> n-1 key */
-                while(pt_find==FALSE)
-                { /*normally is sure to find a key, since even if value is greater than all key: the last pointer is taken*/
-                    pagenum=AM_CheckPointer(j, pt->fanout,  value, pt->header.attrType, pt->header.attrLength, pagebuf);
-                   /* printf("pagenum %d, header num pages %d \n ", pagenum, pt->header.num_pages);*/
-                    if (pagenum>0 && pt->header.num_pages>=pagenum)
-                    {
-                    
-                    tab[i+1]=pagenum;
-                    pt_find=TRUE;
-                    }
-                    else j++;
-                }
-        } 
-        else
-        {
-            fanout=pt->fanout;
-            j=0;
-            /* have to find the next child using comparison */
-           
-                while(1){ /*normally is sure to find a key, since even if value is greater than all key: the last pointer is taken*/                    
-                    key_pos=AM_KeyPos(j, pt->fanout,  value, pt->header.attrType, pt->header.attrLength, pagebuf);
-                    if (key_pos>=0)
-                    {
-                      error=PF_UnpinPage(pt->fd, tab[i], 0);
-                      if(error!=PFE_OK) PF_ErrorHandler(error);
-                      return key_pos;
-                    }
-                    else j++;
-                }
-        }
-        error=PF_UnpinPage(pt->fd, tab[i], 0);
-        if(error!=PFE_OK) PF_ErrorHandler(error);
-     }      
-}
-
 
 
 
@@ -337,6 +264,81 @@ int AM_KeyPos(int pos, int fanout, char* value, char attrType, int attrLength, c
   }
 } 
    
+   
+/* B tree*/
+/* policy to go through the B tree using a particular value, if the value if len than a key in a node or a leaf then the previous pointer has to be taken, otherwise ( greater or equal) the value is check with the next keys in the node until it is less than one or until the last key (the last pointer of the node is taken then )*/
+/* int AM_FindLeaf(int ifd,char* value, int* tab) algorithm: -check parameter: the size of tab is the height of the tree and the first element is the page num of root.
+               - go through the Btree with the policy explain above, and stock the pagenum of every scanned node in the array tab , at the end the pagenum of the leaf where the value has to be insert is returned 
+               - return error or HFE_OK, in case of duplicate key: the position of the first equal key in the leaf*/
+int AM_FindLeaf(int idesc, char* value, int* tab)
+{
+    int error,  pagenum;
+    bool_t is_leaf, pt_find;
+    int key_pos;
+    AMitab_ele *AMitab;
+    AMitab_ele* pt;
+    int fanout;
+    char* pagebuf;
+    int i,j;
+
+    /* all verifications of idesc and root number has already been done by the caller function */
+    pt=AMitab+idesc;
+    
+    tab[0]=pt->header.racine_page;
+   
+    if(tab[0]<=1) return AME_WRONGROOT;
+    
+    for(i=0; i<(pt->header.height_tree);i++)
+    {
+
+        error=PF_GetThisPage(pt->fd, tab[i], &pagebuf);
+        if(error!=PFE_OK) PF_ErrorHandler(error);
+        
+        /*check if this node is a leaf */
+        memcpy((bool_t*) &is_leaf, (char*) pagebuf, sizeof(bool_t));
+        
+        if( is_leaf==FALSE)
+        {
+            fanout=pt->fanout;
+            pt_find=FALSE;
+            j=0;
+            /* have to find the next child using comparison */
+            /* fanout = n ==> n-1 key */
+                while(pt_find==FALSE)
+                { /*normally is sure to find a key, since even if value is greater than all key: the last pointer is taken*/
+                    pagenum=AM_CheckPointer(j, pt->fanout,  value, pt->header.attrType, pt->header.attrLength, pagebuf);
+                   /* printf("pagenum %d, header num pages %d \n ", pagenum, pt->header.num_pages);*/
+                    if (pagenum>0 && pt->header.num_pages>=pagenum)
+                    {
+                    
+                    tab[i+1]=pagenum;
+                    pt_find=TRUE;
+                    }
+                    else j++;
+                }
+        } 
+        else
+        {
+            fanout=pt->fanout;
+            j=0;
+            /* have to find the next child using comparison */
+           
+                while(1){ /*normally is sure to find a key, since even if value is greater than all key: the last pointer is taken*/                    
+                    key_pos=AM_KeyPos(j, pt->fanout,  value, pt->header.attrType, pt->header.attrLength, pagebuf);
+                    if (key_pos>=0)
+                    {
+                      error=PF_UnpinPage(pt->fd, tab[i], 0);
+                      if(error!=PFE_OK) PF_ErrorHandler(error);
+                      return key_pos;
+                    }
+                    else j++;
+                }
+        }
+        error=PF_UnpinPage(pt->fd, tab[i], 0);
+        if(error!=PFE_OK) PF_ErrorHandler(error);
+     }      
+}
+
 
 
 /*

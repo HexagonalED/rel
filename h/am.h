@@ -1,7 +1,7 @@
 #ifndef __AM_H__
 #define __AM_H__
 
-#include <minirel.h>
+#include "minirel.h"
 
 #define AM_ITAB_SIZE    MAXOPENFILES    /* max number of AM files allowed */
 #define MAXISCANS       MAXOPENFILES    /* max number of AM scans allowed */
@@ -15,17 +15,17 @@
  * prototypes for AM functions
  */
 void AM_Init		(void);
-int  AM_CreateIndex	(const char *fileName, int indexNo, char attrType,
+int  AM_CreateIndex	(char *fileName, int indexNo, char attrType,
 			int attrLength, bool_t isUnique);
-int  AM_DestroyIndex	(const char *fileName, int indexNo); 
-int  AM_OpenIndex       (const char *fileName, int indexNo);
+int  AM_DestroyIndex	(char *fileName, int indexNo); 
+int  AM_OpenIndex       (char *fileName, int indexNo);
 int  AM_CloseIndex      (int fileDesc);
 int  AM_InsertEntry	(int fileDesc, char *value, RECID recId);
 int  AM_DeleteEntry     (int fileDesc, char *value, RECID recId);
 int  AM_OpenIndexScan	(int fileDesc, int op, char *value);
 RECID AM_FindNextEntry	(int scanDesc);
 int  AM_CloseIndexScan	(int scanDesc);
-void AM_PrintError	(const char *errString);
+void AM_PrintError	(char *errString);
 
 /*
  * AM layer constants 
